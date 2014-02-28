@@ -6,6 +6,7 @@
 int WORLD_Y = 1;
 int WORLD_X = 1;
 int SCALE = 50;
+int gridWeight = 4;
 
 vector<Robot> bots;
 vector<Wall> walls;
@@ -50,6 +51,7 @@ namespace Karel {
 
 	private: System::Windows::Forms::Timer^  timer1;
 	private: System::Windows::Forms::Timer^  timer2;
+	private: System::Windows::Forms::PictureBox^  pictureBox1;
 
 	private: System::ComponentModel::IContainer^  components;
 	protected: 
@@ -68,9 +70,13 @@ namespace Karel {
 		void InitializeComponent(void)
 		{
 			this->components = (gcnew System::ComponentModel::Container());
+			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(MyForm::typeid));
 			this->panel1 = (gcnew System::Windows::Forms::Panel());
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
 			this->timer2 = (gcnew System::Windows::Forms::Timer(this->components));
+			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
+			this->panel1->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// panel1
@@ -78,6 +84,7 @@ namespace Karel {
 			this->panel1->AutoSize = true;
 			this->panel1->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->panel1->BackColor = System::Drawing::Color::WhiteSmoke;
+			this->panel1->Controls->Add(this->pictureBox1);
 			this->panel1->Dock = System::Windows::Forms::DockStyle::Fill;
 			this->panel1->Location = System::Drawing::Point(0, 0);
 			this->panel1->Name = L"panel1";
@@ -92,6 +99,16 @@ namespace Karel {
 			// 
 			this->timer2->Tick += gcnew System::EventHandler(this, &MyForm::timer2_Tick);
 			// 
+			// pictureBox1
+			// 
+			this->pictureBox1->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"pictureBox1.Image")));
+			this->pictureBox1->Location = System::Drawing::Point(29, 31);
+			this->pictureBox1->Name = L"pictureBox1";
+			this->pictureBox1->Size = System::Drawing::Size(100, 50);
+			this->pictureBox1->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
+			this->pictureBox1->TabIndex = 0;
+			this->pictureBox1->TabStop = false;
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -103,6 +120,8 @@ namespace Karel {
 			this->Load += gcnew System::EventHandler(this, &MyForm::MyForm_Load);
 			this->ResizeEnd += gcnew System::EventHandler(this, &MyForm::timer1_Tick);
 			this->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &MyForm::MyForm_KeyPress);
+			this->panel1->ResumeLayout(false);
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -116,8 +135,8 @@ namespace Karel {
 				 
 				 ClientSize = System::Drawing::Size(WORLD_X*SCALE, WORLD_Y*SCALE);
 				 panel1->Size = System::Drawing::Size(WORLD_X*SCALE, WORLD_Y*SCALE);
-
-				 
+				 pictureBox1->Size = System::Drawing::Size(SCALE -4, SCALE -4);
+	 
 				 gp1 = panel1->CreateGraphics();
 
 				 black = gcnew SolidBrush(Color::Black);
@@ -139,27 +158,18 @@ namespace Karel {
 				 for (int i = 0; i < walls.size(); i++)
 					 gp1 -> FillRectangle(brown, walls[i].getLoc_x()*SCALE+2, walls[i].getLoc_y()*SCALE+2, 46, 46);
 
-				 
 				 timer1->Enabled = false;
 			 }
 
 	private: System::Void timer2_Tick(System::Object^  sender, System::EventArgs^  e) {
-				 
 
-				 //for (int i = 0; i < bots.size(); i++)
-					 //gp1 -> FillRectangle(blue, bots[i].getLoc_x()*SCALE+2, bots[i].getLoc_y()*SCALE+2, 46, 46);
-				 //for (int i = 1; i < bots.size(); i++)
-					 //gp1 -> FillRectangle(control, bots[i].getLoc_x()*SCALE+2, bots[i].getLoc_y()*SCALE+2, 46, 46);			 
-				 
-				 gp1 -> FillRectangle(blue, bots[0].getLoc_x()*SCALE+2, bots[0].getLoc_y()*SCALE+2, 46, 46);
+				 pictureBox1 -> Location = System::Drawing::Point(bots[0].getLoc_x()*SCALE+2, bots[0].getLoc_y()*SCALE+2);
 
 
 				 timer2->Enabled = false;
 			 }
 private: System::Void MyForm_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e) {
-			 
-			 gp1 -> FillRectangle(control, bots[0].getLoc_x()*SCALE+2, bots[0].getLoc_y()*SCALE+2, 46, 46);
-			 
+			 		 
 			 if (e->KeyChar == 'w')
 				 bots[0].move_up();
 			 else if(e->KeyChar == 'a')
@@ -172,9 +182,6 @@ private: System::Void MyForm_KeyPress(System::Object^  sender, System::Windows::
 			 timer1 -> Enabled = true;
 			 timer2 -> Enabled = true;
 			 
-			
-
-
 		 }
 };
 
@@ -219,7 +226,6 @@ void readFile()
 		}
 		else if(str == "WALL")
 		{
-			//TODO ish. We need a wall vector. So we need a wall class. So we can draw in load_tick
 			fin >> x;
 			fin >> y;
 
@@ -233,9 +239,3 @@ void readFile()
 	}
 	
 }
-
-/*
-
-Okay seth, you need to make a function 
-*/
-
