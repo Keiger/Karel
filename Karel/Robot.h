@@ -18,8 +18,13 @@ public:
 	int getBeepers();
 	int getDirection();
 
-	void move_up();
-	void move_down();
+	void move_forward();
+	void move_back();
+
+	void turn_right();
+	void turn_left();
+
 	void move_left();
 	void move_right();
+	void turn();
 };

@@ -6,7 +6,7 @@ Robot::Robot()
 	loc_x = 0;
 	loc_y = 0;
 	beepers = 0;
-	direction = 1;
+	direction = 1;  // NORTH = 1, 
 }
 
 Robot::~Robot(){}
@@ -39,19 +39,60 @@ int Robot::getDirection()
 	return direction;
 }
 
-void Robot::move_up()
+void Robot::move_forward()
 {
-	loc_y = loc_y--;
+		switch(direction)
+		{
+		case 0:
+			if(loc_y > 0)
+				loc_y--;
+			break;
+		case 1:
+			loc_x++;
+			break;
+		case 2:
+			loc_y++;
+			break;
+		case 3:
+			loc_x--;
+			break;
+		}
 }
-void Robot::move_down()
+void Robot::move_back()
 {
-	loc_y = loc_y++;
+	int temp = getDirection();
+	turn();
+	turn();
+	move_forward();
+	direction = temp;
 }
+
+void Robot::turn_right()
+{
+	turn();
+}
+void Robot::turn_left()
+{
+	turn();
+	turn();
+	turn();
+}
+
+
 void Robot::move_left()
 {
-	loc_x = loc_x--;
+	loc_x--;
 }
 void Robot::move_right()
 {
-	loc_x = loc_x++;
+	loc_x++;
+}
+
+void Robot::turn()
+{
+	if(direction == 3)
+		direction = 0;
+	else
+		direction++;
+
 }

@@ -2,4 +2,4 @@ World 8 8
 wall 1 1
 wall 0 1
 wall 0 0
-robot 3 4 0 0
+robot 3 4 0 1

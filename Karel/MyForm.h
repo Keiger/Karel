@@ -12,6 +12,7 @@ vector<Robot> bots;
 vector<Wall> walls;
 
 void readFile();
+void flip();
 
 namespace Karel {
 
@@ -136,6 +137,8 @@ namespace Karel {
 				 ClientSize = System::Drawing::Size(WORLD_X*SCALE, WORLD_Y*SCALE);
 				 panel1->Size = System::Drawing::Size(WORLD_X*SCALE, WORLD_Y*SCALE);
 				 pictureBox1->Size = System::Drawing::Size(SCALE -4, SCALE -4);
+
+				 pictureBox1 -> Image -> RotateFlip(RotateFlipType(bots[0].getDirection()));
 	 
 				 gp1 = panel1->CreateGraphics();
 
@@ -165,24 +168,33 @@ namespace Karel {
 
 				 pictureBox1 -> Location = System::Drawing::Point(bots[0].getLoc_x()*SCALE+2, bots[0].getLoc_y()*SCALE+2);
 
-
 				 timer2->Enabled = false;
 			 }
 private: System::Void MyForm_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e) {
 			 		 
 			 if (e->KeyChar == 'w')
-				 bots[0].move_up();
-			 else if(e->KeyChar == 'a')
-				 bots[0].move_left();
+				 bots[0].move_forward();
+			 else if(e->KeyChar == 'a'){
+				 bots[0].turn_left();
+				 pictureBox1 -> Image -> RotateFlip(RotateFlipType(3));
+				 pictureBox1 -> Refresh();}
 			 else if(e->KeyChar == 's')
-				 bots[0].move_down();
-			 else if(e->KeyChar == 'd')
-				 bots[0].move_right();
+				 bots[0].move_back();
+			 else if(e->KeyChar == 'd'){
+				 bots[0].turn_right();
+				 pictureBox1 -> Image -> RotateFlip(RotateFlipType(1));
+				 pictureBox1 -> Refresh();}
+			 else if(e->KeyChar == 'r'){
+				 bots[0].turn();
+				 pictureBox1 -> Image -> RotateFlip(RotateFlipType(1));
+				 pictureBox1 -> Refresh();
+				 }
 
 			 timer1 -> Enabled = true;
 			 timer2 -> Enabled = true;
 			 
 		 }
+
 };
 
 }
@@ -235,6 +247,10 @@ void readFile()
 		else if(str == "BEEPER")
 		{
 			//TODO
+		}
+		else if(str == "TURN")
+		{
+			bots[0].turn();
 		}
 	}
 	
