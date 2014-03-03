@@ -44,8 +44,8 @@ void Robot::move_forward()
 		switch(direction)
 		{
 		case 0:
-			if(loc_y > 0)
-				loc_y--;
+			//if(loc_y > 0)
+			loc_y--;
 			break;
 		case 1:
 			loc_x++;
@@ -96,3 +96,4 @@ void Robot::turn()
 		direction++;
 
 }
+

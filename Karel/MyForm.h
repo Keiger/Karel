@@ -5,14 +5,16 @@
 
 int WORLD_Y = 1;
 int WORLD_X = 1;
-int SCALE = 50;
+int SCALE = 70;
 int gridWeight = 4;
 
 vector<Robot> bots;
 vector<Wall> walls;
 
 void readFile();
-void flip();
+bool canMoveForward();
+bool canMoveBack();
+bool checkWalls(int Wx, int Wy);
 
 namespace Karel {
 
@@ -159,7 +161,7 @@ namespace Karel {
 					 gp1 -> FillRectangle(black, -2, i*SCALE-2, WORLD_X*SCALE, 4);
 
 				 for (int i = 0; i < walls.size(); i++)
-					 gp1 -> FillRectangle(brown, walls[i].getLoc_x()*SCALE+2, walls[i].getLoc_y()*SCALE+2, 46, 46);
+					 gp1 -> FillRectangle(brown, walls[i].getLoc_x()*SCALE+2, walls[i].getLoc_y()*SCALE+2, SCALE-gridWeight, SCALE-gridWeight);
 
 				 timer1->Enabled = false;
 			 }
@@ -172,18 +174,24 @@ namespace Karel {
 			 }
 private: System::Void MyForm_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e) {
 			 		 
-			 if (e->KeyChar == 'w')
-				 bots[0].move_forward();
+			 if (e->KeyChar == 'w'){
+				 if (canMoveForward())
+					 bots[0].move_forward();}
+
 			 else if(e->KeyChar == 'a'){
 				 bots[0].turn_left();
 				 pictureBox1 -> Image -> RotateFlip(RotateFlipType(3));
 				 pictureBox1 -> Refresh();}
-			 else if(e->KeyChar == 's')
-				 bots[0].move_back();
+
+			 else if(e->KeyChar == 's'){
+				 if (canMoveBack())
+					 bots[0].move_back();}
+
 			 else if(e->KeyChar == 'd'){
 				 bots[0].turn_right();
 				 pictureBox1 -> Image -> RotateFlip(RotateFlipType(1));
 				 pictureBox1 -> Refresh();}
+
 			 else if(e->KeyChar == 'r'){
 				 bots[0].turn();
 				 pictureBox1 -> Image -> RotateFlip(RotateFlipType(1));
@@ -194,10 +202,9 @@ private: System::Void MyForm_KeyPress(System::Object^  sender, System::Windows::
 			 timer2 -> Enabled = true;
 			 
 		 }
-
 };
-
 }
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -253,5 +260,65 @@ void readFile()
 			bots[0].turn();
 		}
 	}
+
+	fin.close();
 	
+}
+
+bool canMoveForward()
+{
+	switch(bots[0].getDirection())
+	{
+	case 0:
+		if ((bots[0].getLoc_y() == 0) || checkWalls(0,-1))
+			return false;
+		break;
+	case 1:
+		if ((bots[0].getLoc_x() == WORLD_X-1) || checkWalls(1,0))
+			return false;
+		break;
+	case 2:
+		if ((bots[0].getLoc_y() == WORLD_Y-1) || checkWalls(0,1))
+			return false;
+		break;
+	case 3:
+		if ((bots[0].getLoc_x() == 0) || checkWalls(-1,0))
+			return false;
+		break;
+	}
+	return true;
+}
+bool canMoveBack() // I reversed the directions from canMoveForward.
+{
+	switch(bots[0].getDirection())
+	{
+	case 2:
+		if ((bots[0].getLoc_y() == 0) || checkWalls(0,-1))
+			return false;
+		break;
+	case 3:
+		if ((bots[0].getLoc_x() == WORLD_X-1) || checkWalls(1,0))
+			return false;
+		break;
+	case 0:
+		if ((bots[0].getLoc_y() == WORLD_Y-1) || checkWalls(0,1))
+			return false;
+		break;
+	case 1:
+		if ((bots[0].getLoc_x() == 0) || checkWalls(-1,0))
+			return false;
+		break;
+	}
+	return true;
+}
+
+
+bool checkWalls(int Wx, int Wy)
+{
+	for (int i = 0; i < walls.size(); i++)
+	{
+		if ((bots[0].getLoc_x() + Wx == walls[i].getLoc_x()) && (bots[0].getLoc_y() + Wy == walls[i].getLoc_y()))
+			return true;
+	}
+	return false;
 }
